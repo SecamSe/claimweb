@@ -3,7 +3,7 @@ from flask_login import login_user, login_required, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from package import app, db
-from package.models import User
+from package.models import User, Claim
 
 
 @app.route('/', methods=['GET'])
@@ -78,4 +78,4 @@ def users():
 
 @app.route('/claim', methods=['GET'])
 def claim():
-    return render_template('claim.html')
+    return render_template('claim.html', claims=Claim.query.all())

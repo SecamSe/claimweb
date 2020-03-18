@@ -1,12 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Заявки</title>
-</head>
-<body>
-<form>
-    <input type="date" name="">
-</form>
-</body>
-</html>
+{% extends 'bootstrap/base.html' %}
+
+
+
+
+{% block content %}
+{% for claim in claims %}
+<div class="row">
+        <div class="col-md-1">{{claim.date}}</div>
+        <div class="col-md-6">{{claim.claim}}</div>
+        <div class="col-md-3">{{claim.comment}}</div>
+</div>
+{% endfor %}
+{% endblock %}
