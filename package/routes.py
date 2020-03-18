@@ -15,15 +15,13 @@ def index():
 def login_page():
     login = request.form.get('login')
     password = request.form.get('password')
+    next_page = request.args.get('next')
 
     if login and password:
         user = User.query.filter_by(login=login).first()
 
         if user and check_password_hash(user.password, password):
             login_user(user)
-
-            next_page = request.args.get('next')
-
             return redirect(next_page)
         else:
             flash('Неправильное имя либо пароль')
@@ -31,7 +29,7 @@ def login_page():
     else:
         flash('Заполните все поля')
 
-    return render_template('login.html')
+    return render_template('login.html', next=next_page)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -39,6 +37,7 @@ def register():
     login = request.form.get('login')
     password = request.form.get('password')
     password2 = request.form.get('password2')
+    next_page = request.args.get('next')
 
     if request.method == 'POST':
         if not (login or password or password2):
@@ -51,9 +50,9 @@ def register():
             db.session.add(new_user)
             db.session.commit()
 
-            return redirect(url_for('login_page'))
+            return redirect(url_for('login_page') + '?next=' + next_page)
 
-    return render_template('register.html')
+    return render_template('register.html', next=next_page)
 
 
 @app.route('/logout', methods=['GET', 'POST'])

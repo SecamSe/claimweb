@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="static/style_tag.css" type="text/css">
 </head>
-<body style="background-color:gray">
+<body>
 <h1>Login page</h1>
 
 {% with messages = get_flashed_messages() %}
@@ -28,8 +29,8 @@
             <td><input type="password" name="password"></td>
         </tr>
         <tr>
-            <td><a href="{{ url_for('register') }}">Регистрация</a></td>
-            <td><input type="submit" value="Login"></td>
+            <td><a href="{{ url_for('register') + '?next=' + next }}">Регистрация</a></td>
+            <td><input type="submit" value="Вход"></td>
         </tr>
     </table>
 </form>

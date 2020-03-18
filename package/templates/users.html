@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Пользователи</title>
+    <link rel="stylesheet" href="static/style_tag.css" type="text/css">
 </head>
-<body style="background-color:gray">
+<body>
 <div style="float:right">
-    <form method="post" action="{{ url_for('logout') }}">
+    <form action="{{ url_for('logout') }}" method="post" >
         <button type="submit">Выход</button>
     </form>
 </div>
