@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Пользователи</title>
-    <link rel="stylesheet" href="static/style_tag.css" type="text/css">
 </head>
 <body>
 <div style="float:right">
@@ -13,15 +12,54 @@
 </div>
 <h1>Пользователи</h1>
 <table border="1">
-<tr>
-    <td>Имя</td><td>Пароль</td>
-</tr>
+    <thead>
+        <tr>
+            <th>Имя</th><th>ФИО</th><th>e-mail</th><th>Группа</th>
+        </tr>
+    </thead>
 {% for user in users %}
     <tr>
-    <td>{{user.login}}</td> <td>{{user.password}}</td>
+        <td>{{user.login}}</td>
+        <td>{{user.fullname}}</td>
+        <td>{{user.email}}</td>
+     <!--   <td>{{user.usergroup.groupe_name}}</td>-->
+        <td>
+            <select>
+                <option>без группы</option>>
+                {% for group in groups %}
+                        <option {% if user.group_user_id == group.id%} selected="selected" {%endif%}>
+                            {{group.group_name}}
+                        </option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <a type="button"
+               onClick="return window.confirm('Удалить Пользователя {{ user.fullname }}')"
+               href="{{url_for('users', task='delete', id=user.id) }}">Удалить</a>
+            <a type="button" href="{{url_for('users', task='edit', id=user.id) }}">Редактировать</a>
+        </td>
     </tr>
 {% endfor %}
 
+</table>
+<p>
+<h1>Группы пользователей</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Название</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        {%for group in groups%}
+        <tr>
+            <td>{{group.group_name}}</td>
+        </tr>
+        {%endfor%}
+    </tbody>
 </table>
 </body>
 </html>

@@ -1,9 +1,11 @@
 from flask import render_template, redirect, url_for, request, flash
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_table import Table, Col, DateCol
+import datetime
 
 from package import app, db
-from package.models import User, Claim
+from package.models import User, Claim, Usergroup, ProfileForm
 
 
 @app.route('/', methods=['GET'])
@@ -35,6 +37,7 @@ def login_page():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     login = request.form.get('login')
+    fullname = request.form.get('fullname')
     password = request.form.get('password')
     password2 = request.form.get('password2')
     next_page = request.args.get('next')
@@ -46,7 +49,7 @@ def register():
             flash('Пароли не совпадают')
         else:
             hash_pwd = generate_password_hash(password)
-            new_user = User(login=login, password=hash_pwd)
+            new_user = User(login=login, fullname=fullname, password=hash_pwd)
             db.session.add(new_user)
             db.session.commit()
 
@@ -70,12 +73,62 @@ def redirect_to_signin(response):
     return response
 
 
-@app.route('/users', methods=['GET'])
+@app.route('/users', methods=['POST', 'GET'])
 @login_required
 def users():
-    return render_template('users.html', users=User.query.all())
+    task = request.args.get('task')
+    if task == 'delete':
+        User.query.filter_by(id=request.args.get('id')).delete()
+        db.session.commit()
+    elif task == 'edit':
+        pass
+
+    users = User.query.outerjoin(Usergroup).all()
+    groups = Usergroup.query.all()
+
+    return render_template('users.html', users=users, groups=groups)
 
 
-@app.route('/claim', methods=['GET'])
+@app.route('/claim', methods=['POST', 'GET'])
+@login_required
 def claim():
-    return render_template('claim.html', claims=Claim.query.all())
+    task = request.args.get('task')
+    if task == 'delete':
+        Claim.query.filter_by(id=request.args.get('id')).delete()
+        db.session.commit()
+    elif task == 'edit':
+        pass
+    elif task == 'make':
+        upd = db.session.query(Claim).get(request.args.get('id'))
+        upd.make_date = datetime.date.today()
+        upd.executer_user_id = current_user.get_id()
+        db.session.commit()
+
+    claims = Claim.query.join(User, Claim.source_user_id == User.id).all()
+    #   Claim.query.join(User).all()
+    return render_template('claim.html', claims=claims)
+
+
+@app.route('/add_claim', methods=['POST'])
+def add_claim():
+    date = datetime.date.today()
+    claim = request.form.get('claim')
+    comment = request.form.get('comment')
+    new_claim = Claim(date=date, claim=claim, comment=comment, source_user_id=current_user.get_id())
+    db.session.add(new_claim)
+    db.session.commit()
+    return redirect(url_for('claim'))
+
+
+@app.route('/profile', methods=['POST', 'GET'])
+def profile():
+    form = ProfileForm(request.form)
+    groups = db.session.query(Usergroup).all()
+    if request.method == 'POST' and form.validate_on_submit():
+        upd = db.session.query(User).get(current_user.get_id())
+        upd.login = form.login.data
+        upd.fullname = form.fullname.data
+        upd.email = form.email.data
+        db.session.commit()
+
+    return render_template('profile.html', form=form, groups=groups)

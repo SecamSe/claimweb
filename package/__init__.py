@@ -16,4 +16,5 @@ bootstrap = Bootstrap(app)
 
 from package import models, routes
 
+
 db.create_all()

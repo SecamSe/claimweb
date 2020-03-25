@@ -21,8 +21,12 @@
 <form method="post">
     <table>
         <tr>
-            <td>Имя</td>
+            <td>Имя для входа</td>
             <td><input type="text" name="login" required></td>
+        </tr>
+        <tr>
+            <td>ФИО</td>
+            <td><input type="text" name="fullname" required></td>
         </tr>
         <tr>
             <td>Пароль</td>
@@ -34,7 +38,7 @@
         </tr>
         <tr>
             <td><a href="{{ url_for('login_page') + '?next=' + next }}">Войти</a></td>
-            <td><input type="submit" value="register"></td>
+            <td><input type="submit" value="Зарегистрировать"></td>
         </tr>
     </table>
 </form>

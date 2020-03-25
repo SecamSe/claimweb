@@ -1,20 +1,32 @@
- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Главная страница</title>
-    <link rel="stylesheet" href="static/style.css" type="text/css">
-    <link rel="stylesheet" href="static/style_tag.css" type="text/css">
-    <meta charset="UTF-8">
-</head>
+{% extends 'bootstrap/base.html' %}
+{% block title%}
+Главная
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default" style="text-align:center">
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a  href={{url_for('claim')}} role="button">Заявки</a></li>
+                    <li><a  href={{url_for('users')}} role="button">Пользователи</a></li>
+                </ul>
+                 <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{{url_for('profile')}}">{{current_user.fullname}}</a></li>
+                    {% if current_user.is_anonymous %}
+                        <li><a href="{{url_for('login_page') + '?next=' + '/'}}">Вход</a></li>
+                    {% else %}
+                        <li><a href={{url_for('logout')}}>Выход</a></li>
+                    {% endif %}
+                 </ul>
+            </div>
+
+    </nav>
+{% endblock %}
+
+{% block content %}
 
 <body>
-<div class="saitbar">
-<ul class="menu-3">
-    <li><a href="{{ url_for('claim') }}">Заявки</a></li>
-    <li><a href="{{ url_for('users') }}">Пользователи</a></li>
-    <li><a href=""></a></li>
-</ul>
-</div>
 
 </body>
-</html>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "bootstrap/base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+<div class="container">
+
+  <h3>Настройки Вашего профиля</h3>
+
+
+<form action="" method="post" class="form" role="form" autocomplete="off">
+    {{ form.csrf_token() }}
+    <div class="row">
+        <div class="form-group col-md-6">
+            {{ wtf.form_field(form.login, value=current_user.login ,class='form-control', placeholder='Имя для входа') }}
+        </div>
+        <div class="form-group col-md-6">
+            {{ wtf.form_field(form.fullname, value=current_user.fullname, class='form-control', placeholder='Ф.И.О.') }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-6">
+            {{ wtf.form_field(form.email, value=current_user.email, class='form-control', placeholder='Адрес E-mail') }}
+        </div>
+         <div class="form-group col-md-6">
+             <div>
+                 <label for="Select">Группа</label>
+                 <select class="form-control" id="Select">
+                     {% for group in groups %}
+                        <option>{{group.group_name}}</option>
+                     {% endfor %}
+                </select>
+            </div>
+         </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Изменить</button>
+</form>
+</div>
+{% endblock %}

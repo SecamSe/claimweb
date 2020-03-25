@@ -1,14 +1,112 @@
 {% extends 'bootstrap/base.html' %}
+{% block title%}
+Заявки
+{% endblock %}
 
+{% block navbar %}
 
-
+            <form method="post" action={{url_for('logout')}}>
+            <p style="text-align:right">
+                    <a href="{{url_for('profile')}}">{{current_user.fullname}}</a>
+                    <button class="btn btn-info" type="submit">Выход</button>
+            </form>
+    </nav>
+{% endblock %}
 
 {% block content %}
-{% for claim in claims %}
-<div class="row">
-        <div class="col-md-1">{{claim.date}}</div>
-        <div class="col-md-6">{{claim.claim}}</div>
-        <div class="col-md-3">{{claim.comment}}</div>
+<div class="container-fluid">
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-primary active">
+        <input type="radio" name="options" id="option1" checked> Все
+      </label>
+      <label class="btn btn-primary">
+        <input type="radio" name="options" id="option2"> Не выполнено
+      </label>
+      <label class="btn btn-primary">
+        <input type="radio" name="options" id="option3"> Выполнено
+      </label>
+    </div>
 </div>
-{% endfor %}
+<div class="container-fluid">
+
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+        <tr class="d-flex">
+           <!-- <th class="col-1"></th>
+            <th class="col-4">Создана</th>
+            <th class="col-4">Объект</th>
+            <th class="col-1">Выполнена</th>
+            <th class="col-20">Заявка</th>
+            <th class="col-10">Комментарий</th>
+            <th class="col-1">Автор</th>
+            <th class="col-10">Комментарий испонителя</th>
+            <th class="col-1">Исполнитель</th>
+            <th class="col-1"><span class="glyphicon glyphicon-asterisk"></span></th>-->
+            <th style="width: 1%"></th>
+            <th style="width: 5%">Создана</th>
+            <th style="width: 15%">Объект</th>
+            <th style="width: 5%">Выполнена</th>
+            <th style="width: 15%">Заявка</th>
+            <th style="width: 15%">Комментарий</th>
+            <th style="width: 5%">Автор</th>
+            <th style="width: 15%">Сделано</th>
+            <th style="width: 5%">Выполнил</th>
+            <th style="width: 1%"><span class="glyphicon glyphicon-asterisk"></span></th>
+        </tr>
+        </thead>
+        <tbody>
+                {% set i = 0 %}
+                {% for claim in claims %}
+                {% set i = i+1 %}
+                <tr>
+                        <th scope="row">{{loop.index}}</th>
+                        <td>{{claim.date}}</td>
+                        <td></td>
+                        <td>
+                            {%if claim.make_date%}
+                                {{claim.make_date}}
+                            {%else%}
+                                <a class="btn btn-primary"
+                                   href="{{url_for('claim', task='make', id=claim.id) }}"
+                                   role="button">Выполнить
+                                </a>
+                            {%endif%}
+                        </td>
+                        <td>{{claim.claim}}</td>
+                        <td>{{claim.comment}}</td>
+                        <td>{{claim.user.login}}</td>
+                        <td></td>
+                        <td>{{claim.executer_user.login}}</td>
+                        <td><a href="{{url_for('claim', task='edit', id=claim.id) }}">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                            <p></p>
+                            <a onClick="return window.confirm('Удалить заявку от {{ claim.date }}')"
+                               href="{{url_for('claim', task='delete', id=claim.id) }}">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                        </td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div><p></p></div>
+<div class="container-fluid">
+<form method="post" action="/add_claim" autocomplete="off">
+
+        <div class="form-group">
+                <label for="claim">Заявка</label>
+                <input name="claim" type="text" class="form-control" id="claim">
+                <small id="claimlHelp" class="form-text text-muted">заявка</small>
+        </div>
+         <div class="form-group">
+                <label for="comment">Комментарий</label>
+                <input name="comment" type="text" class="form-control" id="comment">
+                <small id="commentHelp" class="form-text text-muted">комментарий</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Создать заявку</button>
+</form>
+</div>
+
 {% endblock %}
